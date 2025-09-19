@@ -16,7 +16,7 @@ Inspired by Zephyr and FreeRTOS, but designed to stay tiny, transparent, and hac
 
 ## 🚀 Getting Started
 ```bash
-git clone https://github.com/YOURNAME/micros.git
+git clone https://github.com/microsproject/micros.git
 cd micros
 cmake -S . -B build -DMICROS_PORT=posix
 cmake --build build -j
