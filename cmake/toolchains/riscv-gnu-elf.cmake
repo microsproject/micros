@@ -1,0 +1,61 @@
+# RISC-V RV32 (bare-metal) using riscv-none-elf GCC
+# Required:
+#   -DMICROS_RISCV_ARCH=rv32imac
+#   -DMICROS_RISCV_ABI=ilp32
+# Optional:
+#   -DMICROS_GNU_RISCV_PREFIX=riscv-none-elf
+
+set(CMAKE_SYSTEM_NAME Generic)
+set(CMAKE_SYSTEM_PROCESSOR riscv32)
+set(CMAKE_TRY_COMPILE_TARGET_TYPE STATIC_LIBRARY)
+
+set(MICROS_GNU_RISCV_PREFIX "${MICROS_GNU_RISCV_PREFIX}" CACHE STRING "GNU RISC-V tool prefix")
+if(NOT MICROS_GNU_RISCV_PREFIX OR MICROS_GNU_RISCV_PREFIX STREQUAL "")
+  set(MICROS_GNU_RISCV_PREFIX riscv-none-elf)
+endif()
+
+set(CMAKE_C_COMPILER   ${MICROS_GNU_RISCV_PREFIX}-gcc)
+set(CMAKE_CXX_COMPILER ${MICROS_GNU_RISCV_PREFIX}-g++)
+set(CMAKE_ASM_COMPILER ${MICROS_GNU_RISCV_PREFIX}-gcc)
+set(CMAKE_AR           ${MICROS_GNU_RISCV_PREFIX}-ar)
+set(CMAKE_OBJCOPY      ${MICROS_GNU_RISCV_PREFIX}-objcopy)
+set(CMAKE_OBJDUMP      ${MICROS_GNU_RISCV_PREFIX}-objdump)
+set(CMAKE_SIZE         ${MICROS_GNU_RISCV_PREFIX}-size)
+
+set(MICROS_RISCV_ARCH "${MICROS_RISCV_ARCH}" CACHE STRING "e.g., rv32imac")
+set(MICROS_RISCV_ABI  "${MICROS_RISCV_ABI}"  CACHE STRING "e.g., ilp32")
+
+if(NOT MICROS_RISCV_ARCH OR NOT MICROS_RISCV_ABI)
+  message(FATAL_ERROR "Provide -DMICROS_RISCV_ARCH=rv32imac -DMICROS_RISCV_ABI=ilp32")
+endif()
+
+set(ARCH_CPU_FLAGS "-march=${MICROS_RISCV_ARCH} -mabi=${MICROS_RISCV_ABI}")
+set(ARCH_WARN "-Wall -Wextra -Werror")
+set(ARCH_SIZE "-ffunction-sections -fdata-sections")
+set(ARCH_OTHER "-ffreestanding -fno-builtin -mstrict-align")
+if(MICROS_LTO)
+  list(APPEND ARCH_OTHER "-flto")
+endif()
+
+set(CMAKE_C_FLAGS_INIT   "${ARCH_CPU_FLAGS} ${ARCH_WARN} ${ARCH_SIZE} ${ARCH_OTHER} ${MICROS_EXTRA_CFLAGS}")
+set(CMAKE_CXX_FLAGS_INIT "${CMAKE_C_FLAGS_INIT} -fno-rtti -fno-exceptions")
+set(CMAKE_ASM_FLAGS_INIT "${ARCH_CPU_FLAGS}")
+
+set(SPECS_FLAGS "")
+if(MICROS_USE_NANO)
+  list(APPEND SPECS_FLAGS "-specs=nano.specs")
+endif()
+list(APPEND SPECS_FLAGS "-specs=nosys.specs")
+
+set(LD_GC "-Wl,--gc-sections")
+set(LD_MAP "-Wl,-Map=${CMAKE_BINARY_DIR}/${CMAKE_PROJECT_NAME}.map")
+
+if(MICROS_PRINTF_FLOAT)
+  list(APPEND CMAKE_EXE_LINKER_FLAGS_INIT "-u _printf_float")
+endif()
+
+set(CMAKE_EXE_LINKER_FLAGS_INIT
+  "${ARCH_CPU_FLAGS} ${LD_GC} ${LD_MAP} ${SPECS_FLAGS} ${MICROS_EXTRA_LDFLAGS}")
+
+set(MICROS_ELF2BIN ${CMAKE_OBJCOPY} -O binary)
+set(MICROS_ELF2HEX ${CMAKE_OBJCOPY} -O ihex)
