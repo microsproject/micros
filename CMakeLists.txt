@@ -36,8 +36,14 @@ project(micros
 
 add_library(${PROJECT_NAME} STATIC)
 
+target_include_directories(${PROJECT_NAME}
+  PUBLIC ${CMAKE_CURRENT_LIST_DIR}/include
+)
+
 add_subdirectory(soc/${MICROS_SOC})
 add_subdirectory(arch/${MICROS_ARCH})
+
+add_subdirectory(third_party)
 
 if(DEFINED MICROS_SAMPLE)
   add_subdirectory(samples/${MICROS_SAMPLE})

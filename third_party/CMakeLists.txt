@@ -20,16 +20,6 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 #
-target_link_options(${PROJECT_NAME} 
-    INTERFACE -T${CMAKE_CURRENT_LIST_DIR}/linker.ld
-)
-
-target_sources(${PROJECT_NAME}
-  PUBLIC syscalls.c
-  PUBLIC boot.c
-  PUBLIC scheduler.c
-)
-
-target_link_libraries(${PROJECT_NAME}
-  PUBLIC cmsis
-)
+if (MICROS_ARCH STREQUAL "arm/cortex_m")
+  add_subdirectory(cmsis)
+endif()
