@@ -62,7 +62,6 @@ if(MICROS_USE_NANO)
 else()
   set(SPECS_FLAGS "-specs=nosys.specs")
 endif()
-# NOTE: add -specs=nosys.specs or your own syscall stubs depending on your libc strategy
 
 set(LD_GC "-Wl,--gc-sections")
 set(LD_MAP "-Wl,-Map=${CMAKE_BINARY_DIR}/${CMAKE_PROJECT_NAME}.map")

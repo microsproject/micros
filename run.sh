@@ -1,9 +1,15 @@
+SAMPLE=$1
+RUN_QEMU=$2
 
-SAMPLE=init_functions
+if [ -z "$SAMPLE" ]; then
+    echo "Error: No target specified."
+    exit 1
+fi
 
 rm -rf build/
-cmake -S . -B build/ -DMICROS_BOARD=lm/lm3s6965evb -DMICROS_SAMPLE=${SAMPLE} -DCMAKE_BUILD_TYPE=Debug
+cmake -S . -B build/ -DMICROS_BOARD=lm/lm3s6965evb -DMICROS_SAMPLE=${SAMPLE} -DCMAKE_BUILD_TYPE=Debug -GNinja
 cmake --build build/
-arm-none-eabi-size build/samples/${SAMPLE}/${SAMPLE}
 
-qemu-system-arm -M lm3s6965evb -nographic -kernel build/samples/${SAMPLE}/${SAMPLE}
+if [ "$RUN_QEMU" = "run" ]; then
+    qemu-system-arm -M lm3s6965evb -nographic -kernel build/samples/${SAMPLE}/${SAMPLE}.elf
+fi

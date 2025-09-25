@@ -27,6 +27,7 @@ if(DEFINED MICROS_BOARD)
     include(${CMAKE_CURRENT_LIST_DIR}/boards/${MICROS_BOARD}/CMakeLists.txt)
 endif()
 include(${CMAKE_CURRENT_LIST_DIR}/cmake/toolchains/micros-toolchain.cmake)
+include(${CMAKE_CURRENT_LIST_DIR}/cmake/tools.cmake)
 
 project(micros 
     LANGUAGES C

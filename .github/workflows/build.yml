@@ -1,0 +1,78 @@
+name: Build ARM Cortex-M
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        build_type: [Debug, Release]
+        sample: [hello_world, init_functions]
+        board: [lm/lm3s6965evb]
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        submodules: recursive
+
+    - name: Install ARM GNU Toolchain
+      uses: carlosperate/arm-none-eabi-gcc-action@v1
+      with:
+        release: '12.2.Rel1'
+
+    - name: Install CMake and Ninja
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y cmake ninja-build
+
+    - name: Verify toolchain
+      run: |
+        arm-none-eabi-gcc --version
+        arm-none-eabi-objcopy --version
+        arm-none-eabi-size --version
+        cmake --version
+        ninja --version
+
+    - name: Create build directory
+      run: mkdir -p build
+
+    - name: Configure CMake
+      working-directory: build
+      run: |
+        cmake .. \
+          -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
+          -GNinja \
+          -DMICROS_BOARD=${{ matrix.board }} \
+          -DMICROS_SAMPLE=${{ matrix.sample }} \
+
+    - name: Build
+      working-directory: build
+      run: cmake --build .
+
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: firmware-${{ matrix.build_type }}
+        path: |
+          build/samples/${{ matrix.sample }}/${{ matrix.sample }}.elf
+          build/samples/${{ matrix.sample }}/${{ matrix.sample }}.hex
+          build/samples/${{ matrix.sample }}/${{ matrix.sample }}.bin
+          build/samples/${{ matrix.sample }}/${{ matrix.sample }}.size
+          build/.map
+
+    - name: Upload build logs on failure
+      if: failure()
+      uses: actions/upload-artifact@v4
+      with:
+        name: build-logs-${{ matrix.build_type }}
+        path: |
+          build/CMakeCache.txt
+          build/CMakeFiles/CMakeError.log
+          build/CMakeFiles/CMakeOutput.log

@@ -24,16 +24,6 @@ cmake_minimum_required(VERSION 3.15)
 
 project(init_functions C)
 
-add_executable(${PROJECT_NAME} main.c)
-target_link_libraries(${PROJECT_NAME} PRIVATE micros)
+add_executable(${PROJECT_NAME}.elf main.c)
 
-add_custom_command(
-  TARGET ${PROJECT_NAME}
-  POST_BUILD
-  COMMAND ${CMAKE_OBJCOPY} -O binary $<TARGET_FILE:${PROJECT_NAME}> ${PROJECT_NAME}.bin
-  COMMENT "Generating binary file from ELF: ${PROJECT_NAME}.bin"
-)
-
-add_custom_target(${PROJECT_NAME}_bin ALL
-  DEPENDS ${PROJECT_NAME}.bin
-)
+micros_add_os_to_target(${PROJECT_NAME}.elf)
