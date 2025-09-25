@@ -1,10 +1,14 @@
 /* SPDX-License-Identifier: MIT */
 /*--------------------------------------------------------------------------------------------------------------------*/
+#define CONFIG_MICROS_LOG_ENABLE
+#define CONFIG_MICROS_LOG_LEVEL MICROS_LOG_LEVEL_DEBUG
+/*--------------------------------------------------------------------------------------------------------------------*/
 #include <stdint.h>
 #include <stdio.h>
 #include "ARMCM3.h"
 #include "core_cm3.h"
 #include "micros/kernel.h"
+#include "micros/log.h"
 /*--------------------------------------------------------------------------------------------------------------------*/
 extern uint32_t __stack_top__;
 extern uint32_t __data_start__;
@@ -14,8 +18,10 @@ extern uint32_t __bss_start__;
 extern uint32_t __bss_end__;
 extern uint32_t __init_start__;
 extern uint32_t __init_end__;
+/*--------------------------------------------------------------------------------------------------------------------*/
+MICROS_LOG_REGISTER(boot, MICROS_LOG_LEVEL_INFO);
+/*--------------------------------------------------------------------------------------------------------------------*/
 static volatile uint32_t tick_counter = 0;
-
 /*--------------------------------------------------------------------------------------------------------------------*/
 extern int main(void);
 extern void PendSV_Handler(void);
@@ -28,6 +34,18 @@ void SysTick_Handler(void) {
     tick_counter++;
     if ((tick_counter % 10) == 0) {
         k_task_yield();
+    }
+}
+/*--------------------------------------------------------------------------------------------------------------------*/
+void NMI_Handler(void) {
+    W("[NMI] A non-maskable interrupt has occurred!");
+    while (1) {
+    }
+}
+/*--------------------------------------------------------------------------------------------------------------------*/
+void HardFault_Handler(void) {
+    E("[HardFault] A hard fault has occurred!");
+    while (1) {
     }
 }
 /*--------------------------------------------------------------------------------------------------------------------*/
@@ -45,8 +63,8 @@ __attribute__((weak,
                section(".init"),
                used)) void
 _init(void);
-__attribute__((weak, alias("Default_Handler"))) void NMI_Handler(void);
-__attribute__((weak, alias("Default_Handler"))) void HardFault_Handler(void);
+void NMI_Handler(void);
+void HardFault_Handler(void);
 __attribute__((weak, alias("Default_Handler"))) void MemManage_Handler(void);
 __attribute__((weak, alias("Default_Handler"))) void BusFault_Handler(void);
 __attribute__((weak, alias("Default_Handler"))) void UsageFault_Handler(void);
@@ -138,10 +156,10 @@ void Reset_Handler(void) {
 
     run_init_functions();
     int return_code = main();
-    printf("[boot] Main function returned with code %d\n", return_code);
+    I("Main function returned with code %d", return_code);
     run_fini_functions();
 
-    printf("[boot] System halted after main return\n");
+    I("System halted after main return");
     while (1) {
         __WFI();
     }
