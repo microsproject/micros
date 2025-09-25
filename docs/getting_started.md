@@ -8,6 +8,7 @@ This guide will help you build and run your first application.
 - GCC (arm-none-eabi for embedded, system GCC for POSIX)
 - Ninja (recommended)
 - Python 3.8+
+- QEMU for arm
 
 ## Building on POSIX (Linux/macOS/Windows WSL)
 ```bash
