@@ -14,7 +14,7 @@ jobs:
       matrix:
         build_type: [Debug, Release]
         sample: [hello_world, init_functions]
-        board: [lm/lm3s6965evb]
+        board: [lm/lm3s6965evb, st/stm32vldiscovery]
     
     steps:
     - name: Checkout code
