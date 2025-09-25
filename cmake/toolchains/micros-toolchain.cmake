@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: MIT
+#
 # MicrOS unified toolchain router
 # Usage (ARM Cortex-M4F example):
 #   cmake -S . -B build \

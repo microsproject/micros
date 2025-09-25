@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: MIT
+#
 # ARM Cortex-M (bare-metal) using GNU Arm Embedded
 # Required cache vars you can pass on the command line:
 #   -DMICROS_CPU=cortex-m4

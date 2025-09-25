@@ -1,9 +1,10 @@
-/**************************************************************************/ /**
-                                                                              * @file     cmsis_compiler.h
-                                                                              * @brief    CMSIS compiler generic header file
-                                                                              * @version  V5.3.0
-                                                                              * @date     04. April 2023
-                                                                              ******************************************************************************/
+/**************************************************************************/
+/**
+ * @file     cmsis_compiler.h
+ * @brief    CMSIS compiler generic header file
+ * @version  V5.3.0
+ * @date     04. April 2023
+ ******************************************************************************/
 /*
  * Copyright (c) 2009-2023 Arm Limited. All rights reserved.
  *

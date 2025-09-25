@@ -1,10 +1,11 @@
-/**************************************************************************/ /**
-                                                                              * @file     ARMCM3.h
-                                                                              * @brief    CMSIS Core Peripheral Access Layer Header File for
-                                                                              *           ARMCM3 Device
-                                                                              * @version  V5.3.2
-                                                                              * @date     01. May 2023
-                                                                              ******************************************************************************/
+/**************************************************************************/
+/**
+ * @file     ARMCM3.h
+ * @brief    CMSIS Core Peripheral Access Layer Header File for
+ *           ARMCM3 Device
+ * @version  V5.3.2
+ * @date     01. May 2023
+ ******************************************************************************/
 /*
  * Copyright (c) 2009-2018 Arm Limited. All rights reserved.
  *

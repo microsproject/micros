@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: MIT
+#
 # Native / POSIX build (host compilers)
 # No cross flags; keep warnings and sane defaults for tests/sim.
 

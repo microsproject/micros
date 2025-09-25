@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: MIT
+#
 # RISC-V RV32 (bare-metal) using riscv-none-elf GCC
 # Required:
 #   -DMICROS_RISCV_ARCH=rv32imac
