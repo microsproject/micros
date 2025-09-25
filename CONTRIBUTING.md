@@ -1,31 +1,29 @@
-# 📄 Contributing to MicrOS
+# Contributing to MicrOS
 
-Thanks for your interest! MicrOS grows with community involvement.
+Thank you for your interest in contributing! 🎉
 
-## How to contribute
-1. **Fork & branch**
-   - Fork `micros` on GitHub
-   - Create feature branch: `git checkout -b feature/my-fix`
-2. **Code style**
-   - C99, `-Wall -Wextra -Werror`
-   - 4-space indent, no tabs
-   - SPDX header: `// SPDX-License-Identifier: Apache-2.0`
-3. **Commit messages**
-   - Use short prefix: `kernel: fix timer race`
-   - One logical change per commit
-4. **Tests**
-   - Add unit tests (POSIX port)
-   - Samples for new drivers
-5. **CI**
-   - Ensure GitHub Actions passes
-   - Run `pre-commit run --all-files`
+## Ways to Contribute
+- Report bugs via GitHub Issues
+- Submit improvements to code or docs via Pull Requests
+- Discuss new ideas in GitHub Discussions
+- Help triage issues and review PRs
 
-## Pull Request process
-- Open PR against `main`
-- At least 1 review required
-- CI must be green
-- Squash commits if asked by maintainers
+## Development Workflow
+1. Fork the repository
+2. Create a feature branch: `git checkout -b feature/my-feature`
+3. Commit your changes: `git commit -m "Add new feature"`
+4. Push to your fork: `git push origin feature/my-feature`
+5. Open a Pull Request
 
-## Reporting Issues
-- Use GitHub Issues
-- Include board/arch, steps to reproduce, logs if possible
+## Coding Standards
+- Use **CMake** as the build system
+- Follow the **MicrOS style guide** (document coming soon)
+- Write clear commit messages
+- Add tests when possible
+
+## Code of Conduct
+All contributors are expected to follow the [Code of Conduct](CODE_OF_CONDUCT.md).
+
+## Security Issues
+Do not report security vulnerabilities publicly.  
+See our [Security Policy](SECURITY.md).
