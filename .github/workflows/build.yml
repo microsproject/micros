@@ -1,4 +1,4 @@
-name: Build ARM Cortex-M
+name: Build - Samples
 
 on:
   push:
@@ -56,15 +56,22 @@ jobs:
       working-directory: build
       run: cmake --build .
 
+    - name: Normalize board name
+      id: normalize
+      run: |
+        norm=$(echo "${{ matrix.board }}" | tr '/' '_')
+        echo "BOARD_NORM=$norm" >> $GITHUB_ENV
+
+
     - name: Upload build artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: firmware-${{ matrix.build_type }}
+        name: sample-${{ matrix.build_type }}-${{ matrix.sample }}-${{ env.BOARD_NORM }}
         path: |
           build/samples/${{ matrix.sample }}/${{ matrix.sample }}.elf
-          build/samples/${{ matrix.sample }}/${{ matrix.sample }}.hex
-          build/samples/${{ matrix.sample }}/${{ matrix.sample }}.bin
-          build/samples/${{ matrix.sample }}/${{ matrix.sample }}.size
+          build/samples/${{ matrix.sample }}/${{ matrix.sample }}.elf.hex
+          build/samples/${{ matrix.sample }}/${{ matrix.sample }}.elf.bin
+          build/samples/${{ matrix.sample }}/${{ matrix.sample }}.elf.size
           build/.map
 
     - name: Upload build logs on failure

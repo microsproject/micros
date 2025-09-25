@@ -2,6 +2,8 @@
 
 **MicrOS — simple, open, embedded**
 
+[![Build - Samples](https://github.com/microsproject/micros/actions/workflows/build.yml/badge.svg)](https://github.com/microsproject/micros/actions/workflows/build.yml)
+
 MicrOS is a lightweight, open-source real-time operating system for microcontrollers and small systems.  
 Inspired by Zephyr and FreeRTOS, but designed to stay tiny, transparent, and hackable.
 
