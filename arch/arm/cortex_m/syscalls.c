@@ -6,13 +6,13 @@
 #include <sys/types.h>
 #include <unistd.h>
 /*--------------------------------------------------------------------------------------------------------------------*/
-extern char __heap_start__;
-extern char __heap_end__;
-static char* heap_cur = &__heap_start__;
-
 extern void stdout_putc(char c); /* provided by soc/system.c */
 /*--------------------------------------------------------------------------------------------------------------------*/
 void* _sbrk(ptrdiff_t incr) {
+    extern char __heap_start__;
+    extern char __heap_end__;
+    static char* heap_cur = &__heap_start__;
+
     char* prev = heap_cur;
     char* next = heap_cur + incr;
 

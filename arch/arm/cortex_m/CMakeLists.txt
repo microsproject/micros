@@ -5,9 +5,9 @@ target_link_options(${PROJECT_NAME}
 )
 
 target_sources(${PROJECT_NAME}
-  PUBLIC syscalls.c
   PUBLIC boot.c
-  PUBLIC scheduler.c
+  PUBLIC kernel.c
+  PUBLIC syscalls.c
 )
 
 target_link_libraries(${PROJECT_NAME}
