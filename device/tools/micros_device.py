@@ -54,8 +54,12 @@ def parse_device(id: str, definition: dict):
 
     return_definition = {}
 
-    for key, vaule in device_definition.items():
-        required, definition_type, default_value = vaule.split(",")
+    for key, value in device_definition.items():
+        if value.count(',') < 1:
+            raise Exception(
+                f"Invalid definition for key '{key}' in system-timer '{id}' definition")
+        value = value+",none" if value.count(",") == 1 else value
+        required, definition_type, default_value = value.split(",")
         if required == "required" and key not in definition:
             raise Exception(
                 f"Missing required key '{key}' in system-timer '{id}' definition")
@@ -127,6 +131,9 @@ def parse_arch(id: str, definition: dict):
 def parse_generic_device(id: str, definition: dict):
     parse_device_define, definition = parse_device(id, definition)
     description_define = parse_device_define
+
+    # check if at least one type and compatible is enabled
+
     for key in definition:
         DESCRIPTION_DEFINES[description_define +
                             "_" + key.upper()] = definition[key]
