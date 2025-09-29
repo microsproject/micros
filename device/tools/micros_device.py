@@ -7,6 +7,7 @@ from argparse import ArgumentParser
 from os import path
 
 from yaml import safe_load
+import os
 
 DESCRIPTION_TYPES = ["board", "soc", "arch"]
 
@@ -18,6 +19,8 @@ DESCRIPTION_DEFINES = {}
 
 COMPATIBLE_PATHS = set()
 
+CMAKE_DEFINITIONS = {}
+
 
 MICROS_ROOT = path.normpath(path.join(
     path.dirname(path.abspath(__file__)), "..", ".."))
@@ -25,10 +28,14 @@ MICROS_ROOT = path.normpath(path.join(
 
 def parse_args():
     parser = ArgumentParser(description="Parse micros device descriptions")
+    parser.add_argument("output_path", type=str, default=None,
+                        help="Output path to write the define files to")
     parser.add_argument("name", type=str,
                         help="Description name, e.g. lm,lm3s6965evb")
     parser.add_argument("-t", "--type", type=str, choices=DESCRIPTION_TYPES,
                         default=DESCRIPTION_TYPES[0], help="Type of description to parse")
+    parser.add_argument("--micros-root", type=str, default=MICROS_ROOT,
+                        help="Path to micros root directory")
     return parser.parse_args()
 
 
@@ -156,18 +163,42 @@ DESCRIPTION_PARSERS = {
 
 
 def parse_description(id: str, description: dict, type="board"):
-    DESCRIPTION_DETAILS[type] = id
     for entry in description:
         was_parsed = False
         for parser_type in DESCRIPTION_PARSERS:
             if parser_type == description[entry]['type']:
                 print(
                     f"Parsing {description[entry]['type']} - {entry} {description[entry]['compatible']}")
+                if description[entry]['type'] == 'arch':
+                    if 'arch' in DESCRIPTION_DETAILS:
+                        raise Exception(
+                            f"Multiple arch definitions found: {entry} and {DESCRIPTION_DETAILS['arch']}")
+                    DESCRIPTION_DETAILS['arch'] = description[entry]
+                if description[entry]['type'] == 'soc':
+                    if 'soc' in DESCRIPTION_DETAILS:
+                        raise Exception(
+                            f"Multiple soc definitions found: {entry} and {DESCRIPTION_DETAILS['soc']}")
+                    DESCRIPTION_DETAILS['soc'] = description[entry]
                 DESCRIPTION_PARSERS[parser_type](entry, description[entry])
                 was_parsed = True
                 continue
         if not was_parsed:
             parse_generic_device(entry, description[entry])
+
+
+def generate_cmake_file(output_path: str):
+    os.makedirs(os.path.dirname(output_path), exist_ok=True)
+    with open(output_path, "w") as file:
+        file.write("# This file is auto-generated. Do not edit.\n\n")
+        file.write("message(STATUS \"MicrOS device configuration\")\n\n")
+        for key, value in CMAKE_DEFINITIONS.items():
+            file.write(f'set({key} "{value}")\n')
+        file.write("\n")
+        for define in DESCRIPTION_DEFINES:
+            value = DESCRIPTION_DEFINES[define]
+            if isinstance(value, str):
+                value = f'"{value}"'
+            file.write(f"set({define} {value})\n")
 
 
 if __name__ == "__main__":
@@ -182,3 +213,13 @@ if __name__ == "__main__":
     print("\n/* Compatible paths */")
     for path in COMPATIBLE_PATHS:
         print(f"  {path}")
+
+    architecture = DESCRIPTION_DETAILS["arch"]["compatible"] if "arch" in DESCRIPTION_DETAILS else "unknown"
+    CMAKE_DEFINITIONS["MICROS_ARCH"] = architecture.replace(",", "/")
+    soc = DESCRIPTION_DETAILS["soc"]["compatible"] if "soc" in DESCRIPTION_DETAILS else "unknown"
+    CMAKE_DEFINITIONS["MICROS_SOC"] = soc.replace(",", "/")
+    CMAKE_DEFINITIONS["MICROS_BOARD"] = args.name
+    generate_cmake_file(os.path.join(
+        args.output_path, "micros_generated.cmake"))
+    print(
+        f"\nCMake definitions written to {os.path.join(args.output_path, 'micros_generated.cmake')}")

@@ -45,7 +45,7 @@ void _log(micros_log_level_t level,
             return;  // Invalid log level
     }
 
-    fprintf(output, color_escape_str);
+    fprintf(output, "%s", color_escape_str);
     if (level != MICROS_LOG_LEVEL_DEBUG) {
         fprintf(output, "[%s] [%s] ", level_str, module_name);
     } else {

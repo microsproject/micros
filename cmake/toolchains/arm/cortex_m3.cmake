@@ -8,6 +8,8 @@
 # Optional:
 #   -DMICROS_GNU_ARM_PREFIX=arm-none-eabi
 
+message(STATUS "Configuring ARM Cortex-M3 toolchain")
+
 set(CMAKE_SYSTEM_NAME Generic)
 set(CMAKE_SYSTEM_PROCESSOR arm)
 set(CMAKE_TRY_COMPILE_TARGET_TYPE STATIC_LIBRARY)
@@ -28,15 +30,10 @@ set(CMAKE_OBJDUMP      ${MICROS_GNU_ARM_PREFIX}-objdump)
 set(CMAKE_SIZE         ${MICROS_GNU_ARM_PREFIX}-size)
 
 # CPU/FPU flags
-set(MICROS_CPU       "${MICROS_CPU}"       CACHE STRING "ARM CPU (e.g., cortex-m4, cortex-m33)")
 set(MICROS_FPU       "${MICROS_FPU}"       CACHE STRING "FPU name (e.g., fpv4-sp-d16, fpv5-sp-d16)")
 set(MICROS_FLOAT_ABI "${MICROS_FLOAT_ABI}" CACHE STRING "float ABI (soft, softfp, hard)")
 
-if(NOT MICROS_CPU)
-  message(FATAL_ERROR "MICROS_CPU is required for arm/cortex_m (e.g., -DMICROS_CPU=cortex-m4)")
-endif()
-
-set(ARCH_CPU_FLAGS "-mcpu=${MICROS_CPU} -mthumb")
+set(ARCH_CPU_FLAGS "-mcpu=cortex-m3 -mthumb")
 if(MICROS_FPU)
   list(APPEND ARCH_CPU_FLAGS "-mfpu=${MICROS_FPU}")
 endif()
@@ -75,7 +72,6 @@ endif()
 
 set(CMAKE_EXE_LINKER_FLAGS_INIT
     "${ARCH_CPU_FLAGS} ${LD_GC} ${LD_MAP} ${SPECS_FLAGS} ${MICROS_EXTRA_LDFLAGS}")
-    message(STATUS "CMAKE_EXE_LINKER_FLAGS_INIT='${CMAKE_EXE_LINKER_FLAGS_INIT}'")
 
 # Convenience output formats (ELF→BIN/HEX) — opt-in via a post-build command in targets
 set(MICROS_ELF2BIN ${CMAKE_OBJCOPY} -O binary)

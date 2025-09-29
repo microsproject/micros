@@ -1,7 +1,8 @@
 /* SPDX-License-Identifier: MIT */
 /*--------------------------------------------------------------------------------------------------------------------*/
 #include <errno.h>
-#include <reent.h>
+#include <stddef.h>
+#include <stdint.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
