@@ -1,0 +1,6 @@
+base: optional,hex,0xe000ed90
+size: optional,hex,0x20
+irq_number: optional,number,0
+irq_enabled: optional,boolean,false
+irq_priority: optional,number,0
+enabled: optional,boolean,false

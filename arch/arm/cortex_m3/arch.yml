@@ -1,0 +1,16 @@
+systick0:
+  type: system-timer
+  compatible: arm,cortex-m-systick
+  enabled: true
+
+nvic0:
+  type: interrupt-controller
+  compatible: arm,cortex-m-nvic
+
+scb0:
+  type: cpu-controller
+  compatible: arm,cortex-m-scb
+
+mpu0:
+  type: memory-protection
+  compatible: arm,cortex-m-mpu
