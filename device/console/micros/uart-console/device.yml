@@ -1,0 +1,3 @@
+serial: required,label,uart0
+baudrate: required,number,115200
+enabled: optional,boolean,false

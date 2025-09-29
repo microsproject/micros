@@ -1,0 +1,5 @@
+base: required,hex,0x00000000
+size: required,hex,0x10000000
+executable: optional,boolean,false
+writable: optional,boolean,true
+enabled: optional,boolean,true

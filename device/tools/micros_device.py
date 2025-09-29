@@ -16,6 +16,8 @@ DESCRIPTION = {}
 
 DESCRIPTION_DEFINES = {}
 
+COMPATIBLE_PATHS = set()
+
 
 MICROS_ROOT = path.normpath(path.join(
     path.dirname(path.abspath(__file__)), "..", ".."))
@@ -44,15 +46,17 @@ def load_device_definition(name, compatible) -> dict:
 
 
 def parse_device(id: str, definition: dict):
+    print(
+        f"Parsing device {id} {definition['type']} {definition['compatible']}")
     compatible = definition['compatible']
     device_definition = load_device_definition(definition['type'], compatible)
 
-    compatible_string = compatible.replace(
+    type_string = definition['type'].replace(
         ",", "_").upper().replace("-", "_").replace(".", "_")
 
-    description_define = "DESCRIPTION_DEFINE_"+compatible_string+"_"+id.upper()
+    description_define = "MICROS_DEVICE_DESCRIPTION_"+type_string+"_"+id.upper()
 
-    return_definition = {}
+    return_definition = {'compatible':  compatible, 'type': definition['type']}
 
     for key, value in device_definition.items():
         if value.count(',') < 1:
@@ -70,7 +74,7 @@ def parse_device(id: str, definition: dict):
                 return_definition[key] = int(default_value, 0)
             elif definition_type == "hex":
                 return_definition[key] = f"0x{int(default_value, 16):x}"
-            elif definition_type == "string":
+            elif definition_type == "string" or definition_type == "label":
                 return_definition[key] = default_value
             elif definition_type == "boolean":
                 if default_value.lower() in ["true", "1", "yes"]:
@@ -89,7 +93,7 @@ def parse_device(id: str, definition: dict):
                     return_definition[key] = f"0x{int(definition[key], 16):x}"
                 else:
                     return_definition[key] = f"0x{definition[key]:x}"
-            elif definition_type == "string":
+            elif definition_type == "string" or definition_type == "label":
                 return_definition[key] = str(definition[key])
             elif definition_type == "boolean":
                 if isinstance(definition[key], bool):
@@ -104,6 +108,8 @@ def parse_device(id: str, definition: dict):
             else:
                 raise Exception(
                     f"Unknown definition type '{definition_type}' for key '{key}' in system-timer '{id}' definition")
+    if return_definition['enabled'] not in [1, True]:
+        return None, None
     return description_define, return_definition
 
 
@@ -130,12 +136,15 @@ def parse_arch(id: str, definition: dict):
 
 def parse_generic_device(id: str, definition: dict):
     parse_device_define, definition = parse_device(id, definition)
-    description_define = parse_device_define
 
-    # check if at least one type and compatible is enabled
+    if parse_device_define is None:
+        return
+
+    COMPATIBLE_PATHS.add('device/' +
+                         definition['type'] + "/" + definition['compatible'].replace(",", "/"))
 
     for key in definition:
-        DESCRIPTION_DEFINES[description_define +
+        DESCRIPTION_DEFINES[parse_device_define +
                             "_" + key.upper()] = definition[key]
 
 
@@ -143,22 +152,22 @@ DESCRIPTION_PARSERS = {
     "board": parse_board,
     "soc": parse_soc,
     "arch": parse_arch,
-    "system-timer": parse_generic_device,
-    "interrupt-controller": parse_generic_device,
-    "cpu-controller": parse_generic_device,
-    "memory-protection": parse_generic_device,
 }
 
 
 def parse_description(id: str, description: dict, type="board"):
     DESCRIPTION_DETAILS[type] = id
     for entry in description:
+        was_parsed = False
         for parser_type in DESCRIPTION_PARSERS:
             if parser_type == description[entry]['type']:
                 print(
                     f"Parsing {description[entry]['type']} - {entry} {description[entry]['compatible']}")
                 DESCRIPTION_PARSERS[parser_type](entry, description[entry])
+                was_parsed = True
                 continue
+        if not was_parsed:
+            parse_generic_device(entry, description[entry])
 
 
 if __name__ == "__main__":
@@ -169,3 +178,7 @@ if __name__ == "__main__":
 
     for define in DESCRIPTION_DEFINES:
         print(define, str(DESCRIPTION_DEFINES[define]))
+
+    print("\n/* Compatible paths */")
+    for path in COMPATIBLE_PATHS:
+        print(f"  {path}")

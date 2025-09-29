@@ -1,0 +1,4 @@
+gpio_port: required,label,None
+gpio_pin: required,number,0
+gpio_flags: optional,string,""
+enabled: optional,boolean,false

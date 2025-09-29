@@ -1,0 +1,9 @@
+bus: required,label,spi0
+cs-gpio-port: required,label,None
+cs-gpio-pin: required,number,0
+dc-gpio-port: required,label,None
+dc-gpio-pin: required,number,0
+width: required,number,128
+height: required,number,96
+rotation: required,number,0
+enabled: optional,boolean,false

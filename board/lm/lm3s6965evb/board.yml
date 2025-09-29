@@ -6,15 +6,15 @@ clock0:
   type: clock
   compatible: micros,clock
   frequency: 50000000
-  status: "okay"
+  enabled: true
 
 
 console0:
   type: console
-  compatible: micros,console
+  compatible: micros,uart-console
   serial: uart0
   baudrate: 115200
-  status: "okay"
+  enabled: true
 
 oled0:
   type: display
@@ -27,66 +27,68 @@ oled0:
   width: 128
   height: 96
   rotation: 0
-  status: "okay"
+  enabled: true
 
 button_select:
-  type: gpio-button
-  compatible: gpio-keys
+  type: button
+  compatible: micros,gpio-button
   gpio_port: gpiof
   gpio_pin: 1
   gpio_flags: "active_low"
   debounce-interval: 100
   label: "User Button"
-  linux,code: 116
-  status: "okay"
+  code: 116
+  enabled: true
 
 button_up:
-  type: gpio-button
-  compatible: gpio-keys
+  type: button
+  compatible: micros,gpio-button
   gpio_port: gpioe
   gpio_pin: 0
   gpio_flags: "active_low"
   debounce-interval: 100
   label: "Up Button"
-  linux,code: 103
-  status: "okay"
+  code: 103
+  enabled: true
 
 button_down:
-  type: gpio-button
-  compatible: gpio-keys
+  type: button
+  compatible: micros,gpio-button
   gpio_port: gpioe
   gpio_pin: 1
   gpio_flags: "active_low"
   debounce-interval: 100
   label: "Down Button"
-  linux,code: 108
-  status: "okay"
+  code: 108  
+  enabled: true
+
 
 button_left:
-  type: gpio-button
-  compatible: gpio-keys
+  type: button
+  compatible: micros,gpio-button
   gpio_port: gpioe
   gpio_pin: 2
   gpio_flags: "active_low"
   debounce-interval: 100
   label: "Left Button"
-  linux,code: 105
-  status: "okay"
+  code: 105
+  enabled: true
 
 button_right:
-  type: gpio-button
-  compatible: gpio-keys
+  type: button
+  compatible: micros,gpio-button
   gpio_port: gpioe
   gpio_pin: 3
   gpio_flags: "active_low"
   debounce-interval: 100
   label: "Right Button"
-  linux,code: 106
-  status: "okay"
+  code: 106
+  enabled: true
 
 led0:
-  type: gpio-led
-  compatible: gpio-leds
+  type: led
+  compatible: micros,gpio-led
   gpio_port: gpiof
   gpio_pin: 0
   gpio_flags: "active_low"
+  enabled: true
